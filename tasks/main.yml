@@ -1,2 +1,51 @@
 ---
 # tasks file for dronenb.steamdeck
+- name: Check steamos-readonly status
+  become: true
+  ansible.builtin.shell:
+    cmd: steamos-readonly status || echo "" # Do this to force zero exit code
+  ignore_errors: true
+  register: steamos_readonly_status
+  changed_when: false
+
+- name: Disable steamos-readonly
+  when: not "disabled" in steamos_readonly_status.stdout
+  become: true
+  ansible.builtin.command:
+    cmd: steamos-readonly disable
+
+- name: Enable SSH on boot
+  become: true
+  ansible.builtin.systemd:
+    name: sshd
+    enabled: true
+    state: started
+
+- name: Update flatpaks
+  become: true
+  ansible.builtin.command:
+    cmd: flatpak update --noninteractive --assumeyes
+  register: flatpak_update
+  changed_when: not "Nothing to do." in flatpak_update.stdout
+
+- name: Update pacman packages
+  become: true
+  community.general.pacman:
+    update_cache: true
+    upgrade: true
+
+- name: Install flatpak packages
+  become: true
+  community.general.flatpak:
+    name: "{{ flatpaks }}"
+
+- name: Install pacman packages
+  become: true
+  community.general.pacman:
+    name: "{{ pacman_packages }}"
+
+- name: Enable steamos-readonly
+  become: true
+  ansible.builtin.command:
+    cmd: steamos-readonly enable
+  changed_when: true
