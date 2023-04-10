@@ -44,6 +44,12 @@
   community.general.pacman:
     name: "{{ pacman_packages }}"
 
+- name: Put Emudeck desktop file on the desktop
+  ansible.builtin.get_url:
+    url: https://www.emudeck.com/EmuDeck.desktop
+    dest: "/home/{{ ansible_user }}/EmuDeck.desktop"
+    mode: 0755
+
 - name: Enable steamos-readonly
   become: true
   ansible.builtin.command:
