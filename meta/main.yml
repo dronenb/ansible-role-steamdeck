@@ -1,10 +1,11 @@
+---
 galaxy_info:
   author: dronenb
   description: Configures my Steam Deck
   license: MIT
   namespace: dronenb
   role_name: steamdeck
-  min_ansible_version: 2.1
+  min_ansible_version: "2.1"
   platforms:
     - name: ArchLinux
       versions:
