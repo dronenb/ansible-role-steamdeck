@@ -15,6 +15,21 @@
     cmd: steamos-readonly disable
   changed_when: true
 
+- name: Check steamos-devmode status status
+  become: true
+  ansible.builtin.shell:
+    cmd: set -o pipefail; steamos-devmode status || echo ""
+  ignore_errors: true
+  register: steamos_devmode_status
+  changed_when: false
+
+- name: Enable steamos-devmode
+  when: not "disabled" in steamos_devmode_status.stdout
+  become: true
+  ansible.builtin.shell:
+    cmd: set -o pipefail; echo "y" | steamos-devmode enable || echo ""
+  changed_when: true
+
 - name: Enable SSH on boot
   become: true
   ansible.builtin.systemd:
