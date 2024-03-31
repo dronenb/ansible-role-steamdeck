@@ -24,7 +24,7 @@
   changed_when: false
 
 - name: Enable steamos-devmode
-  when: not "disabled" in steamos_devmode_status.stdout
+  when: not "enabled" in steamos_devmode_status.stdout
   become: true
   ansible.builtin.shell:
     cmd: set -o pipefail; echo "y" | steamos-devmode enable || echo ""
